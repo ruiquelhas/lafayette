@@ -1,0 +1,45 @@
+{
+  "name": "lafayette",
+  "version": "0.0.1",
+  "description": "Route-level file signature validation for hapi temporary file payloads",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "lab -a code -t 100 -L",
+    "test-tap": "lab -a code -r tap -o tests.tap",
+    "test-cov-html": "lab -a code -r html -o coverage.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruiquelhas/lafayette.git"
+  },
+  "keywords": [
+    "file",
+    "hapi",
+    "joi",
+    "magik",
+    "validation"
+  ],
+  "author": "Rui Quelhas <rfpquelhas@gmail.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/ruiquelhas/lafayette/issues"
+  },
+  "homepage": "https://github.com/ruiquelhas/lafayette#readme",
+  "devDependencies": {
+    "code": "2.x.x",
+    "coveralls": "2.x.x",
+    "form-data": "0.x.x",
+    "hapi": "11.x.x",
+    "lab": "8.x.x",
+    "stream-to-promise": "1.x.x"
+  },
+  "dependencies": {
+    "hoek": "3.x.x",
+    "items": "2.x.x",
+    "lodash.some": "3.x.x",
+    "thurston": "1.x.x"
+  },
+  "engines": {
+    "node": ">= 4.0.0"
+  }
+}
