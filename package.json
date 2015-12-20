@@ -4,6 +4,7 @@
   "description": "Route-level file signature validation for hapi temporary file payloads",
   "main": "lib/index.js",
   "scripts": {
+    "coveralls": "lab -r lcov | ./node_modules/.bin/coveralls",
     "test": "lab -a code -t 100 -L",
     "test-tap": "lab -a code -r tap -o tests.tap",
     "test-cov-html": "lab -a code -r html -o coverage.html"
