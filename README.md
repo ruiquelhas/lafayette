@@ -1,16 +1,14 @@
 # lafayette
-Route-level file type validation for [hapi](https://github.com/hapijs/hapi) parsed `multipart/form-data` temporary file request payloads.
-Also works as a standalone module, and most importantly, works in tandem with [thurston](https://github.com/ruiquelhas/thurston) for a truly magical experience.
+Route-level file type validation for [hapi](https://github.com/hapijs/hapi) parsed `multipart/form-data` temporary file request payloads. Also works as a standalone module, and most importantly, works in tandem with [thurston](https://github.com/ruiquelhas/thurston) for a truly magical experience.
 
 [![NPM Version][fury-img]][fury-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependencies][david-img]][david-url]
 
 ## Table of Contents
-
 - [Installation](#installation)
 - [Usage](#usage)
-    - [`validate(payload, options, fn)`](#validatepayload-options-fn)
-        - [Hapi](#hapi)
-        - [Standalone](#standalone)
+  - [`validate(payload, options, fn)`](#validatepayload-options-fn)
+    - [Hapi](#hapi)
+    - [Standalone](#standalone)
 - [Supported File Types](#supported-file-types)
 
 ## Installation
@@ -21,25 +19,22 @@ $ npm install lafayette
 ```
 
 ## Usage
-
 ### `validate(payload, options, fn)`
+Validates all values in a `payload` that match the hapi temporary file pattern object given a `whitelist` of file types provided in the `options`. Results in a [joi](https://github.com/hapijs/joi)-like `ValidationError` if some file type is not allowed or unknown otherwise it returns the original parsed payload to account for additional custom validation.
 
-Validates all values in a `payload` that match the hapi temporary file pattern object given a `whitelist` of file types provided in the `options`.
-Results in a [joi](https://github.com/hapijs/joi)-like `ValidationError` if some file type is not allowed or unknown otherwise it returns the original parsed payload to account for additional custom validation.
-
-#### Hapi
+### Hapi
 
 ```js
 const Hapi = require('hapi');
 const Lafayette = require('lafayette');
 
-server = new Hapi.Server();
+const server = new Hapi.Server();
 
 server.connection({
     routes: {
         validate: {
             options: {
-                whitelist: ['png']
+                whitelist: ['image/png']
             }
         }
     }
@@ -61,12 +56,12 @@ server.route({
 ### Standalone
 
 ```js
-const fs = require('fs');
+const Fs = require('fs');
 const Lafayette = require('lafayette');
 
-const options = { whitelist: ['png'] };
+const options = { whitelist: ['image/png'] };
 
-fs.createWriteStream('file.png').end(new Buffer([0x89, 0x50]));
+Fs.createWriteStream('file.png').end(new Buffer('89504e47', 'hex'));
 const png = {
     filename: 'file.png',
     path: '.',
@@ -82,8 +77,15 @@ Lafayette.validate({ file: png }, options, (err, value) => {
     console.log(err); // null
     console.log(value); // { file: { filename: 'file.png', path: '.', ... } }
 });
+```
 
-fs.createWriteStream('file.gif').end(new Buffer([0x47, 0x49]));
+```js
+const Fs = require('fs');
+const Lafayette = require('lafayette');
+
+const options = { whitelist: ['image/png'] };
+
+Fs.createWriteStream('file.gif').end(new Buffer('47494638', 'hex'));
 const gif = {
     filename: 'file.gif',
     path: '.',
@@ -102,8 +104,7 @@ Lafayette.validate({ file: gif }, options, (err, value) => {
 ```
 
 ## Supported File Types
-
-The same as [magik](https://github.com/ruiquelhas/magik#supported-file-types).
+The same as [file-type](https://github.com/sindresorhus/file-type#supported-file-types).
 
 [coveralls-img]: https://coveralls.io/repos/ruiquelhas/lafayette/badge.svg
 [coveralls-url]: https://coveralls.io/github/ruiquelhas/lafayette
