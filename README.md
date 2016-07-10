@@ -25,7 +25,7 @@ $ npm install lafayette
 
 ### `validate(payload, options, fn)`
 
-Validates all values in a `payload` that match the hapi temporary file pattern object given a `whitelist` of file types provided in the `options`. Results in a [joi](https://github.com/hapijs/joi)-like `ValidationError` if some file type is not allowed or unknown otherwise it returns the original parsed payload to account for additional custom validation.
+Validates all values in a `payload` that match the `hapi` temporary file pattern object given a `whitelist` of file types provided in the `options`. Results in a [joi](https://github.com/hapijs/joi)-like `ValidationError` if some file type is not allowed or unknown, otherwise it returns the original parsed payload to account for additional custom validation.
 
 ### Hapi
 
@@ -67,6 +67,7 @@ const Lafayette = require('lafayette');
 const options = { whitelist: ['image/png'] };
 
 Fs.createWriteStream('file.png').end(new Buffer('89504e47', 'hex'));
+
 const png = {
     filename: 'file.png',
     path: '.',
@@ -91,6 +92,7 @@ const Lafayette = require('lafayette');
 const options = { whitelist: ['image/png'] };
 
 Fs.createWriteStream('file.gif').end(new Buffer('47494638', 'hex'));
+
 const gif = {
     filename: 'file.gif',
     path: '.',
