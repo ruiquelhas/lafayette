@@ -5,10 +5,9 @@ const Os = require('os');
 const Path = require('path');
 
 const Code = require('code');
-const FormData = require('form-data');
+const Form = require('multi-part');
 const Hapi = require('hapi');
 const Lab = require('lab');
-const StreamToPromise = require('stream-to-promise');
 
 const Lafayette = require('../lib');
 
@@ -55,22 +54,19 @@ lab.experiment('Lafayette', () => {
 
         Fs.createWriteStream(invalid).end(new Buffer('ffffffff', 'hex'));
 
-        const form = new FormData();
+        const form = new Form();
         form.append('file', Fs.createReadStream(invalid));
         form.append('foo', 'bar');
 
-        StreamToPromise(form).then((payload) => {
+        server.inject({ headers: form.getHeaders(), method: 'POST', payload: form.get(), url: '/' }, (response) => {
 
-            server.inject({ headers: form.getHeaders(), method: 'POST', payload: payload, url: '/' }, (response) => {
-
-                Code.expect(response.statusCode).to.equal(400);
-                Code.expect(response.result).to.include(['message', 'validation']);
-                Code.expect(response.result.message).to.equal('child \"file\" fails because [\"file\" type is unknown]');
-                Code.expect(response.result.validation).to.include(['source', 'keys']);
-                Code.expect(response.result.validation.source).to.equal('payload');
-                Code.expect(response.result.validation.keys).to.include('file');
-                done();
-            });
+            Code.expect(response.statusCode).to.equal(400);
+            Code.expect(response.result).to.include(['message', 'validation']);
+            Code.expect(response.result.message).to.equal('child \"file\" fails because [\"file\" type is unknown]');
+            Code.expect(response.result.validation).to.include(['source', 'keys']);
+            Code.expect(response.result.validation.source).to.equal('payload');
+            Code.expect(response.result.validation.keys).to.include('file');
+            done();
         });
     });
 
@@ -80,18 +76,15 @@ lab.experiment('Lafayette', () => {
 
         Fs.createWriteStream(png).end(new Buffer('89504e47', 'hex'));
 
-        const form = new FormData();
+        const form = new Form();
         form.append('file1', Fs.createReadStream(png));
         form.append('file2', Fs.createReadStream(png));
         form.append('foo', 'bar');
 
-        StreamToPromise(form).then((payload) => {
+        server.inject({ headers: form.getHeaders(), method: 'POST', payload: form.get(), url: '/' }, (response) => {
 
-            server.inject({ headers: form.getHeaders(), method: 'POST', payload: payload, url: '/' }, (response) => {
-
-                Code.expect(response.statusCode).to.equal(200);
-                done();
-            });
+            Code.expect(response.statusCode).to.equal(200);
+            done();
         });
     });
 });
