@@ -66,7 +66,7 @@ const Lafayette = require('lafayette');
 
 const options = { whitelist: ['image/png'] };
 
-Fs.createWriteStream('file.png').end(new Buffer('89504e47', 'hex'));
+Fs.createWriteStream('file.png').end(Buffer.from('89504e47', 'hex'));
 
 const png = {
     filename: 'file.png',
@@ -91,7 +91,7 @@ const Lafayette = require('lafayette');
 
 const options = { whitelist: ['image/png'] };
 
-Fs.createWriteStream('file.gif').end(new Buffer('47494638', 'hex'));
+Fs.createWriteStream('file.gif').end(Buffer.from('47494638', 'hex'));
 
 const gif = {
     filename: 'file.gif',
