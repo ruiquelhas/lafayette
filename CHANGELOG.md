@@ -1,5 +1,12 @@
 # Changelog
 
+## [v2.0.3](https://github.com/ruiquelhas/lafayette/tree/v2.0.3) (2016-10-26)
+[Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.2...v2.0.3)
+
+**Merged pull requests:**
+
+- Update dependencies [\#9](https://github.com/ruiquelhas/lafayette/pull/9) ([ruiquelhas](https://github.com/ruiquelhas))
+
 ## [v2.0.2](https://github.com/ruiquelhas/lafayette/tree/v2.0.2) (2016-07-10)
 [Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.1...v2.0.2)
 
