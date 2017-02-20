@@ -114,7 +114,7 @@ Lafayette.validate({ file: gif }, options, (err, value) => {
 
 The same as [file-type](https://github.com/sindresorhus/file-type#supported-file-types).
 
-[coveralls-img]: https://img.shields.io/coveralls/ruiquelhas/lafayette/badge.svg?style=flat-square
+[coveralls-img]: https://img.shields.io/coveralls/ruiquelhas/lafayette.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/github/ruiquelhas/lafayette
 [david-img]: https://img.shields.io/david/ruiquelhas/lafayette.svg?style=flat-square
 [david-url]: https://david-dm.org/ruiquelhas/lafayette
