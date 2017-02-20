@@ -2,7 +2,7 @@
 
 Route-level file type validation for [hapi](https://github.com/hapijs/hapi) parsed `multipart/form-data` temporary file request payloads. Also works as a standalone module, and most importantly, works in tandem with [thurston](https://github.com/ruiquelhas/thurston) for a truly magical experience.
 
-[![NPM Version][fury-img]][fury-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependencies][david-img]][david-url]
+[![NPM Version][version-img]][version-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Dependencies][david-img]][david-url] [![Dev Dependencies][david-dev-img]][david-dev-url]
 
 ## Table of Contents
 
@@ -114,11 +114,13 @@ Lafayette.validate({ file: gif }, options, (err, value) => {
 
 The same as [file-type](https://github.com/sindresorhus/file-type#supported-file-types).
 
-[coveralls-img]: https://coveralls.io/repos/ruiquelhas/lafayette/badge.svg
+[coveralls-img]: https://img.shields.io/coveralls/ruiquelhas/lafayette/badge.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/github/ruiquelhas/lafayette
-[david-img]: https://david-dm.org/ruiquelhas/lafayette.svg
+[david-img]: https://img.shields.io/david/ruiquelhas/lafayette.svg?style=flat-square
 [david-url]: https://david-dm.org/ruiquelhas/lafayette
-[fury-img]: https://badge.fury.io/js/lafayette.svg
-[fury-url]: https://badge.fury.io/js/lafayette
-[travis-img]: https://travis-ci.org/ruiquelhas/lafayette.svg
+[david-dev-img]: https://img.shields.io/david/dev/ruiquelhas/lafayette.svg?style=flat-square
+[david-dev-url]: https://david-dm.org/ruiquelhas/lafayette?type=dev
+[version-img]: https://img.shields.io/npm/v/lafayette.svg?style=flat-square
+[version-url]: https://www.npmjs.com/package/lafayette
+[travis-img]: https://img.shields.io/travis/ruiquelhas/lafayette.svg?style=flat-square
 [travis-url]: https://travis-ci.org/ruiquelhas/lafayette
