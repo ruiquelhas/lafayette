@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.4](https://github.com/ruiquelhas/lafayette/tree/v2.0.4) (2017-02-20)
+[Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.3...v2.0.4)
+
+**Fixed bugs:**
+
+- Flaky tests run without file fixtures available [\#10](https://github.com/ruiquelhas/lafayette/issues/10)
+- Support tasks [\#11](https://github.com/ruiquelhas/lafayette/pull/11) ([ruiquelhas](https://github.com/ruiquelhas))
+
 ## [v2.0.3](https://github.com/ruiquelhas/lafayette/tree/v2.0.3) (2016-10-26)
 [Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.2...v2.0.3)
 
