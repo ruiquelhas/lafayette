@@ -32,7 +32,7 @@ lab.experiment('Lafayette', () => {
             }
         });
 
-        server.route({
+        const baseRoute = {
             config: {
                 handler: (request, reply) => reply(),
                 payload: {
@@ -45,7 +45,27 @@ lab.experiment('Lafayette', () => {
             },
             method: 'POST',
             path: '/'
-        });
+        };
+
+        server.route([
+            baseRoute,
+            Object.assign({}, baseRoute, {
+                config: Object.assign({}, baseRoute.config, {
+                    payload: {
+                        output: 'data'
+                    }
+                }),
+                path: '/data'
+            }),
+            Object.assign({}, baseRoute, {
+                config: Object.assign({}, baseRoute.config, {
+                    payload: {
+                        output: 'stream'
+                    }
+                }),
+                path: '/stream'
+            })
+        ]);
 
         done();
     });
@@ -88,6 +108,24 @@ lab.experiment('Lafayette', () => {
         form.append('foo', 'bar');
 
         server.inject({ headers: form.getHeaders(), method: 'POST', payload: form.stream(), url: '/' }, (response) => {
+
+            Code.expect(response.statusCode).to.equal(200);
+            done();
+        });
+    });
+
+    lab.test('should return control to the server if the payload is parsed as a stream', (done) => {
+
+        server.inject({ method: 'POST', payload: undefined, url: '/stream' }, (response) => {
+
+            Code.expect(response.statusCode).to.equal(200);
+            done();
+        });
+    });
+
+    lab.test('should return control to the server if the payload is parsed as a buffer', (done) => {
+
+        server.inject({ method: 'POST', payload: undefined, url: '/data' }, (response) => {
 
             Code.expect(response.statusCode).to.equal(200);
             done();
