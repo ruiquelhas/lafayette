@@ -1,5 +1,12 @@
 # Changelog
 
+## [v3.0.0](https://github.com/ruiquelhas/lafayette/tree/v3.0.0) (2017-06-08)
+[Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.4...v3.0.0)
+
+**Implemented enhancements:**
+
+- Update tests and dependencies [\#12](https://github.com/ruiquelhas/lafayette/pull/12) ([ruiquelhas](https://github.com/ruiquelhas))
+
 ## [v2.0.4](https://github.com/ruiquelhas/lafayette/tree/v2.0.4) (2017-02-20)
 [Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.3...v2.0.4)
 
