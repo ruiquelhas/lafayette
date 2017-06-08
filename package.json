@@ -37,7 +37,7 @@
   "dependencies": {
     "hoek": "4.x.x",
     "items": "2.x.x",
-    "thurston": "2.x.x"
+    "thurston": "3.x.x"
   },
   "engines": {
     "node": ">=4.5.0"
