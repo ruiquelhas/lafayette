@@ -9,21 +9,20 @@ const Form = require('multi-part');
 const Hapi = require('hapi');
 const Lab = require('lab');
 
-const Lafayette = require('../lib');
+const Lafayette = require('../');
 
 const lab = exports.lab = Lab.script();
 
-lab.experiment('Lafayette', () => {
+lab.experiment('lafayette', () => {
 
     let goodServer;
     let badServer;
     let invalid;
     let png;
 
-    lab.before((done) => {
+    lab.before(() => {
 
-        goodServer = new Hapi.Server();
-        goodServer.connection({
+        goodServer = new Hapi.Server({
             routes: {
                 validate: {
                     options: {
@@ -33,8 +32,7 @@ lab.experiment('Lafayette', () => {
             }
         });
 
-        badServer = new Hapi.Server();
-        badServer.connection({
+        badServer = new Hapi.Server({
             routes: {
                 validate: {
                     options: {}
@@ -42,14 +40,18 @@ lab.experiment('Lafayette', () => {
             }
         });
 
-        const baseRoute = {
-            config: {
-                handler: (request, reply) => reply(),
+        const fileRoute = {
+            options: {
+                handler: (request) => null,
                 payload: {
                     output: 'file',
                     parse: true
                 },
                 validate: {
+                    failAction: (request, h, err) => {
+
+                        throw err;
+                    },
                     payload: Lafayette.validate
                 }
             },
@@ -57,107 +59,129 @@ lab.experiment('Lafayette', () => {
             path: '/file'
         };
 
-        goodServer.route(baseRoute);
-
-        badServer.route([
-            baseRoute,
-            Object.assign({}, baseRoute, {
-                config: Object.assign({}, baseRoute.config, {
-                    payload: {
-                        output: 'data'
-                    }
-                }),
-                path: '/data'
+        const dataRoute = Object.assign({}, fileRoute, {
+            options: Object.assign({}, fileRoute.options, {
+                payload: {
+                    output: 'data'
+                }
             }),
-            Object.assign({}, baseRoute, {
-                config: Object.assign({}, baseRoute.config, {
-                    payload: {
-                        output: 'stream'
-                    }
-                }),
-                path: '/stream'
-            })
-        ]);
+            path: '/data'
+        });
 
-        done();
+        const streamRoute = Object.assign({}, fileRoute, {
+            options: Object.assign({}, fileRoute.options, {
+                payload: {
+                    output: 'stream'
+                }
+            }),
+            path: '/stream'
+        });
+
+        goodServer.route(fileRoute);
+        badServer.route([fileRoute, dataRoute, streamRoute]);
     });
 
-    lab.beforeEach((done) => {
+    lab.beforeEach(() => {
         // Create invalid format file
         invalid = Path.join(Os.tmpdir(), 'invalid');
-        Fs.createWriteStream(invalid).on('error', done).end(Buffer.from('ffffffffffffffff', 'hex'), done);
+
+        return new Promise((resolve, reject) => {
+
+            return Fs.createWriteStream(invalid)
+                .on('error', reject)
+                .end(Buffer.from('ffffffffffffffff', 'hex'), resolve);
+        });
     });
 
-    lab.beforeEach((done) => {
+    lab.beforeEach(() => {
         // Create fake png file
         png = Path.join(Os.tmpdir(), 'foo.png');
-        Fs.createWriteStream(png).on('error', done).end(Buffer.from('89504e470d0a1a0a', 'hex'), done);
+
+        return new Promise((resolve, reject) => {
+
+            return Fs.createWriteStream(png)
+                .on('error', reject)
+                .end(Buffer.from('89504e470d0a1a0a', 'hex'), resolve);
+        });
     });
 
-    lab.test('should return error if the file type cannot be guessed', (done) => {
+    lab.test('should return error if the file type cannot be guessed', async () => {
 
         const form = new Form();
         form.append('file', Fs.createReadStream(invalid));
         form.append('foo', 'bar');
 
-        goodServer.inject({ headers: form.getHeaders(), method: 'POST', payload: form.stream(), url: '/file' }, (response) => {
-
-            Code.expect(response.statusCode).to.equal(400);
-            Code.expect(response.result).to.include(['message', 'validation']);
-            Code.expect(response.result.message).to.equal('child \"file\" fails because [\"file\" type is unknown]');
-            Code.expect(response.result.validation).to.include(['source', 'keys']);
-            Code.expect(response.result.validation.source).to.equal('payload');
-            Code.expect(response.result.validation.keys).to.include('file');
-            done();
+        const { result, statusCode } = await goodServer.inject({
+            headers: form.getHeaders(),
+            method: 'POST',
+            payload: form.stream(),
+            url: '/file'
         });
+
+        Code.expect(statusCode).to.equal(400);
+        Code.expect(result).to.include(['message', 'validation']);
+        Code.expect(result.message).to.equal('child \"file\" fails because [\"file\" type is unknown]');
+        Code.expect(result.validation).to.include(['source', 'keys']);
+        Code.expect(result.validation.source).to.equal('payload');
+        Code.expect(result.validation.keys).to.include('file');
     });
 
-    lab.test('should return error if no whitelist is specified', (done) => {
+    lab.test('should return error if no whitelist is specified', async () => {
 
         const form = new Form();
         form.append('file', Fs.createReadStream(png));
 
-        badServer.inject({ headers: form.getHeaders(), method: 'POST', payload: form.stream(), url: '/file' }, (response) => {
-
-            Code.expect(response.statusCode).to.equal(400);
-            Code.expect(response.result).to.include(['message', 'validation']);
-            Code.expect(response.result.message).to.equal('child \"file\" fails because [\"file\" type is not allowed]');
-            Code.expect(response.result.validation).to.include(['source', 'keys']);
-            Code.expect(response.result.validation.source).to.equal('payload');
-            Code.expect(response.result.validation.keys).to.include('file');
-            done();
+        const { result, statusCode } = await badServer.inject({
+            headers: form.getHeaders(),
+            method: 'POST',
+            payload: form.stream(),
+            url: '/file'
         });
+
+        Code.expect(statusCode).to.equal(400);
+        Code.expect(result).to.include(['message', 'validation']);
+        Code.expect(result.message).to.equal('child \"file\" fails because [\"file\" type is not allowed]');
+        Code.expect(result.validation).to.include(['source', 'keys']);
+        Code.expect(result.validation.source).to.equal('payload');
+        Code.expect(result.validation.keys).to.include('file');
     });
 
-    lab.test('should return control to the server if all files the payload are allowed', (done) => {
+    lab.test('should return control to the server if all files the payload are allowed', async () => {
 
         const form = new Form();
         form.append('file1', Fs.createReadStream(png));
         form.append('file2', Fs.createReadStream(png));
         form.append('foo', 'bar');
 
-        goodServer.inject({ headers: form.getHeaders(), method: 'POST', payload: form.stream(), url: '/file' }, (response) => {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
+        const { statusCode } = await goodServer.inject({
+            headers: form.getHeaders(),
+            method: 'POST',
+            payload: form.stream(),
+            url: '/file'
         });
+
+        Code.expect(statusCode).to.equal(200);
     });
 
-    lab.test('should return control to the server if the payload is parsed as a stream', (done) => {
+    lab.test('should return control to the server if the payload is parsed as a stream', async () => {
 
-        badServer.inject({ method: 'POST', payload: undefined, url: '/stream' }, (response) => {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
+        const { statusCode } = await badServer.inject({
+            method: 'POST',
+            payload: undefined,
+            url: '/stream'
         });
+
+        Code.expect(statusCode).to.equal(200);
     });
 
-    lab.test('should return control to the server if the payload is parsed as a buffer', (done) => {
+    lab.test('should return control to the server if the payload is parsed as a buffer', async () => {
 
-        badServer.inject({ method: 'POST', payload: undefined, url: '/data' }, (response) => {
-
-            Code.expect(response.statusCode).to.equal(200);
-            done();
+        const { statusCode } = await badServer.inject({
+            method: 'POST',
+            payload: undefined,
+            url: '/data'
         });
+
+        Code.expect(statusCode).to.equal(200);
     });
 });

@@ -8,7 +8,7 @@ Route-level file type validation for [hapi](https://github.com/hapijs/hapi) pars
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [`validate(payload, options, fn)`](#validatepayload-options-fn)
+  - [`async validate(payload, options)`](#async-validatepayload-options)
     - [Hapi](#hapi)
     - [Standalone](#standalone)
 - [Supported File Types](#supported-file-types)
@@ -23,7 +23,7 @@ $ npm install lafayette
 
 ## Usage
 
-### `validate(payload, options, fn)`
+### `async validate(payload, options`
 
 Validates all values in a `payload` that match the `hapi` temporary file pattern object given a `whitelist` of file types provided in the `options`. Results in a [joi](https://github.com/hapijs/joi)-like `ValidationError` if some file type is not allowed or unknown, otherwise it returns the original parsed payload to account for additional custom validation.
 
@@ -33,9 +33,7 @@ Validates all values in a `payload` that match the `hapi` temporary file pattern
 const Hapi = require('hapi');
 const Lafayette = require('lafayette');
 
-const server = new Hapi.Server();
-
-server.connection({
+const server = new Hapi.Server({
     routes: {
         validate: {
             options: {
@@ -46,7 +44,7 @@ server.connection({
 });
 
 server.route({
-    config: {
+    options: {
         validate: {
             payload: Lafayette.validate
         },
@@ -66,7 +64,7 @@ const Lafayette = require('lafayette');
 
 const options = { whitelist: ['image/png'] };
 
-Fs.createWriteStream('file.png').end(Buffer.from('89504e47', 'hex'));
+Fs.createWriteStream('file.png').end(Buffer.from('89504e470d0a1a0a', 'hex'));
 
 const png = {
     filename: 'file.png',
@@ -75,14 +73,16 @@ const png = {
         'content-disposition': 'form-data; name="file"; filename="file.png"',
         'content-type': 'image/png'
     },
-    bytes: 2
+    bytes: 8
 };
 
-Lafayette.validate({ file: png }, options, (err, value) => {
-
-    console.log(err); // null
-    console.log(value); // { file: { filename: 'file.png', path: '.', ... } }
-});
+try {
+    const payload = await Lafayette.validate({ file: png }, options);
+    console.log(payload); // { file: { filename: 'file.png', path: '.', ... } }
+}
+catch (err) {
+    throw err;
+}
 ```
 
 ```javascript
@@ -91,7 +91,7 @@ const Lafayette = require('lafayette');
 
 const options = { whitelist: ['image/png'] };
 
-Fs.createWriteStream('file.gif').end(Buffer.from('47494638', 'hex'));
+Fs.createWriteStream('file.gif').end(Buffer.from('474946383761', 'hex'));
 
 const gif = {
     filename: 'file.gif',
@@ -100,19 +100,19 @@ const gif = {
         'content-disposition': 'form-data; name="file"; filename="file.gif"',
         'content-type': 'image/gif'
     },
-    bytes: 2
+    bytes: 6
 };
 
-Lafayette.validate({ file: gif }, options, (err, value) => {
-
+try {
+    await Lafayette.validate({ file: gif }, options);
+}
+catch (err) {
     console.log(err); // [ValidationError: child "file" fails because ["file" type is not allowed]]
-    console.log(value); // undefined
-});
+}
 ```
 
 ## Supported File Types
-
-The same as [file-type](https://github.com/sindresorhus/file-type#supported-file-types).
+The same as [file-type](https://github.com/sindresorhus/file-type/tree/v7.0.0#supported-file-types).
 
 [coveralls-img]: https://img.shields.io/coveralls/ruiquelhas/lafayette.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/github/ruiquelhas/lafayette
