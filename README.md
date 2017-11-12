@@ -23,7 +23,7 @@ $ npm install lafayette
 
 ## Usage
 
-### `async validate(payload, options`
+### `async validate(payload, options)`
 
 Validates all values in a `payload` that match the `hapi` temporary file pattern object given a `whitelist` of file types provided in the `options`. Results in a [joi](https://github.com/hapijs/joi)-like `ValidationError` if some file type is not allowed or unknown, otherwise it returns the original parsed payload to account for additional custom validation.
 
@@ -46,6 +46,12 @@ const server = new Hapi.Server({
 server.route({
     options: {
         validate: {
+            // override the default `failAction` if you want further
+            // details about the validation error
+            failAction: (request, h, err) => {
+                // throw the error as is
+                throw err;
+            },
             payload: Lafayette.validate
         },
         payload: {
