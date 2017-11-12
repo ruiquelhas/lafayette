@@ -1,5 +1,12 @@
 # Changelog
 
+## [v4.0.1](https://github.com/ruiquelhas/lafayette/tree/v4.0.1) (2017-11-12)
+[Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v4.0.0...v4.0.1)
+
+**Merged pull requests:**
+
+- Add missing documentation content [\#14](https://github.com/ruiquelhas/lafayette/pull/14) ([ruiquelhas](https://github.com/ruiquelhas))
+
 ## [v4.0.0](https://github.com/ruiquelhas/lafayette/tree/v4.0.0) (2017-11-12)
 [Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v3.0.0...v4.0.0)
 
