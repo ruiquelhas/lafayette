@@ -1,5 +1,12 @@
 # Changelog
 
+## [v4.0.0](https://github.com/ruiquelhas/lafayette/tree/v4.0.0) (2017-11-12)
+[Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v3.0.0...v4.0.0)
+
+**Merged pull requests:**
+
+- Add support for hapi v17 [\#13](https://github.com/ruiquelhas/lafayette/pull/13) ([ruiquelhas](https://github.com/ruiquelhas))
+
 ## [v3.0.0](https://github.com/ruiquelhas/lafayette/tree/v3.0.0) (2017-06-08)
 [Full Changelog](https://github.com/ruiquelhas/lafayette/compare/v2.0.4...v3.0.0)
 
